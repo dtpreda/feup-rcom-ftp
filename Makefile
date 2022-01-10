@@ -1,25 +1,18 @@
-PROJ_NAME=ftp
+CC = gcc 
+CFLAGS = -Wall
+PROG_NAME = ftp
 
-SRCDIR=src
+SRCDIR = src
 
-C_SOURCE=$(wildcard $(SRCDIR)/*.c)
-H_SOURCE=$(wildcard $(SRCDIR)/*.h)
+SOURCES := $(shell find $(SRCDIR) -name '*.c')
+OBJECTS := $(SOURCES:%.c=%.o)
 
-OBJ=$(C_SOURCE:.c=.o)
+.PHONY: clean virtual
 
-CC=gcc
-CC_FLAGS=-Wall
+all: application
 
-all: $(PROJ_NAME)
+application: $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(PROG_NAME) $(OBJECTS)
 
-$(PROJ_NAME): $(OBJ)
-	$(CC) -o $@ $< $(CC_FLAGS)
-
-%.o: %.c %.h
-	$(CC) -o $@ $< $(CC_FLAGS)
-
-main.o: main.c $(H_SOURCE)
-	$(CC) -o $@ $< $(CC_FLAGS)
-
-clean: 
-	rm -f $(OBJ) $(PROJ_NAME)
+clean:
+	rm -f $(OBJECTS) $(PROG_NAME)
