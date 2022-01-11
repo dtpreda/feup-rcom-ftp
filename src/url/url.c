@@ -75,7 +75,7 @@ static int get_user_password(char *url, char *user, char* password) {
     }
 
     strncpy(user, user_password + pmatch[0].rm_so, pmatch[0].rm_eo - pmatch[0].rm_so);
-    user[pmatch[0].rm_eo] = '\0';
+    user[pmatch[0].rm_eo  - pmatch[0].rm_so] = '\0';
 
     const char *pass = user_password + pmatch[0].rm_eo + 1;
 
@@ -88,7 +88,7 @@ static int get_user_password(char *url, char *user, char* password) {
     }
 
     strncpy(password, pass + pmatch[0].rm_so, (pmatch[0].rm_eo - pmatch[0].rm_so));
-    password[pmatch[0].rm_eo] = '\0';
+    password[pmatch[0].rm_eo - pmatch[0].rm_so] = '\0';
 
     return SUCCESS;
 }
