@@ -18,6 +18,27 @@ static const char url_regex[] =
         "((:[[:digit:]]{1,4})?)"
         "(/(" URL_CHARS_REGEX ")+)*[/]?$"; 
 
+static int regextract(char* _regex, char* str, char* ret, int max_size, int trim_start, int trim_end, int nullable) {
+    const char *s = str;
+    regex_t regex;
+    regmatch_t pmatch[1];
+
+    if (regcomp(&regex, _regex, REG_EXTENDED)) {
+        return ERROR;
+    }
+
+    if (regexec(&regex, s, 1, pmatch, 0) && !nullable) {
+        return ERROR;
+    }
+
+    if (pmatch[0].rm_eo - pmatch[0].rm_so >= max_size) {
+        return ERROR;
+    }
+
+    strncpy(ret, str + pmatch[0].rm_so + trim_start, pmatch[0].rm_eo - pmatch[0].rm_so - trim_end - trim_start);
+    ret[pmatch[0].rm_eo - pmatch[0].rm_so - trim_start - trim_end] = '\0';
+}
+
 static int validate_ftp_url(char *url) {
     const char *s = url;
     regex_t regex;
@@ -46,125 +67,63 @@ static int get_user_password(char *url, char *user, char* password) {
         return ERROR;
     }
 
-    char user_pass_regex[] = "(" URL_CHARS_REGEX ")*:(" URL_CHARS_REGEX ")*@";
-    const char *s = url;
-    regex_t regex;
-    regmatch_t pmatch[1];
+    char* user_pass[2 * URL_FIELD_MAX + 2];
 
-    if (regcomp(&regex, user_pass_regex, REG_EXTENDED)) {
+    if (regextract("(" URL_CHARS_REGEX ")*:(" URL_CHARS_REGEX ")*@", url, user_pass, 2 * URL_FIELD_MAX + 2, 0, 0, FALSE) == ERROR) {
         return ERROR;
     }
 
-    if (regexec(&regex, s, 1, pmatch, 0)) {
+    if (regextract("(" URL_CHARS_REGEX ")*", user_pass, user, URL_FIELD_MAX, 0, 0, FALSE) == ERROR) {
         return ERROR;
     }
 
-    char split_regex[] = "(" URL_CHARS_REGEX ")*";
-    const char *user_password = s + pmatch[0].rm_so;
-
-    if (regcomp(&regex, split_regex, REG_EXTENDED)) {
+    if (regextract(":(" URL_CHARS_REGEX ")*", user_pass, password, URL_FIELD_MAX, 1, 0, FALSE) == ERROR) {
         return ERROR;
     }
-
-    if (regexec(&regex, user_password, 1, pmatch, 0)) {
-        return ERROR;
-    }
-
-    if (pmatch[0].rm_eo - pmatch[0].rm_so >= URL_FIELD_MAX) {
-        return ERROR;
-    }
-
-    strncpy(user, user_password + pmatch[0].rm_so, pmatch[0].rm_eo - pmatch[0].rm_so);
-    user[pmatch[0].rm_eo  - pmatch[0].rm_so] = '\0';
-
-    const char *pass = user_password + pmatch[0].rm_eo + 1;
-
-    if (regexec(&regex, pass, 1, pmatch, 0)) {
-        return ERROR;
-    }
-
-    if (pmatch[0].rm_eo - pmatch[0].rm_so >= URL_FIELD_MAX) {
-        return ERROR;
-    }
-
-    strncpy(password, pass + pmatch[0].rm_so, (pmatch[0].rm_eo - pmatch[0].rm_so));
-    password[pmatch[0].rm_eo - pmatch[0].rm_so] = '\0';
 
     return SUCCESS;
 }
 
 static int get_address_port_path(char *url, char* address, int* port, char* path) {
     char addr_port_path_regex[] = "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)((:[[:digit:]]{1,4})?)(/(" URL_CHARS_REGEX ")+)*[/]?";
-    const char *s = url;
-    regex_t regex;
-    regmatch_t pmatch[1];
 
-    if (regcomp(&regex, addr_port_path_regex, REG_EXTENDED)) {
+    char *addr_port_path[FILENAME_MAX];
+    if (regextract(addr_port_path_regex, url, addr_port_path, FILENAME_MAX, 0, 0, FALSE) == ERROR) {
         return ERROR;
     }
-
-    if (regexec(&regex, s, 1, pmatch, 0)) {
-        return ERROR;
-    }
-
-    const char *addr_port_path = s + pmatch[0].rm_so;
-    char addr_regex[] = "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)";
     
-    if (regcomp(&regex, addr_regex, REG_EXTENDED)) {
-        return ERROR;
-    }
-
-    if (regexec(&regex, addr_port_path, 1, pmatch, 0)) {
-        return ERROR;
-    }
-
-    if (pmatch[0].rm_eo - pmatch[0].rm_so >= URL_FIELD_MAX) {
-        return ERROR;
-    }
-
-    strncpy(address, addr_port_path + pmatch[0].rm_so, pmatch[0].rm_eo - pmatch[0].rm_so);
-    address[pmatch[0].rm_eo - pmatch[0].rm_so] = '\0';
-
-    char port_regex[] = ":[[:digit:]]{1,4}";
-    
-    if (regcomp(&regex, port_regex, REG_EXTENDED)) {
-        return ERROR;
-    }
-
-    if (regexec(&regex, addr_port_path, 1, pmatch, 0)) {
-        return ERROR;
-    }
-
-    if (pmatch[0].rm_eo - pmatch[0].rm_so >= URL_FIELD_MAX) {
+    if (regextract("((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)", addr_port_path, address, URL_FIELD_MAX, 0, 0, FALSE) == ERROR) {
         return ERROR;
     }
 
     char port_str[URL_FIELD_MAX];
-    strncpy(port_str, addr_port_path + pmatch[0].rm_so + 1, pmatch[0].rm_eo - pmatch[0].rm_so - 1);
-    port_str[pmatch[0].rm_eo - pmatch[0].rm_so - 1] = '\0';
+    if (regextract(":[[:digit:]]{1,4}", addr_port_path, port_str, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
+        return ERROR;
+    }
 
     *port = atoi(port_str);
 
-    if (*port == 0) {
+    if (regextract("(/(" URL_CHARS_REGEX ")+)+[/]?", addr_port_path, path, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
         return ERROR;
-    }
-
-    char path_regex[] = "(/(" URL_CHARS_REGEX ")+)+[/]?";
-
-    if (regcomp(&regex, path_regex, REG_EXTENDED)) {
-        return ERROR;
-    }
-
-    if (regexec(&regex, addr_port_path, 1, pmatch, 0)) {
-        path = "";
-    } else {
-        if (pmatch[0].rm_eo - pmatch[0].rm_so >= URL_FIELD_MAX) {
-            return ERROR;
-        }
-
-        strncpy(path, addr_port_path + pmatch[0].rm_so + 1, pmatch[0].rm_eo - pmatch[0].rm_so - 2);
-        path[pmatch[0].rm_eo - pmatch[0].rm_so - 2] = '\0';
     }
 
     return SUCCESS;
 }
+
+/*
+void print(char* url) {
+    char address[URL_FIELD_MAX];
+    char user[URL_FIELD_MAX];
+    char password[URL_FIELD_MAX];
+    int port;
+    char path[URL_FIELD_MAX];
+
+    get_address_port_path(url, address, &port, path);
+    get_user_password(url, user, password);
+    printf("address: %s\n", address);
+    printf("port: %i\n", port);
+    printf("path: %s\n", path);
+    printf("user: %s\n", user);
+    printf("password: %s\n", password);
+}
+*/
