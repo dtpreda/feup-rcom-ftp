@@ -9,9 +9,6 @@
 #define URL_CHARS_REGEX                                                        \
     "([[:alnum:]\\$\\.\\+\\*\\(\\),!'_-]+)|(%[[:xdigit:]]{2})"
 
-#define URL_FIELD_MAX 1024
-
-
 static int regextract(char* _regex, char* str, char* ret, int max_size, int trim_start, int trim_end, int nullable) {
     const char *s = str;
     regex_t regex;
