@@ -11,12 +11,6 @@
 
 #define URL_FIELD_MAX 1024
 
-static const char url_regex[] =
-        "^(ftp|FTP)://"
-        "(((" URL_CHARS_REGEX ")*(:(" URL_CHARS_REGEX ")*)?@)?)"
-        "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)"
-        "((:[[:digit:]]{1,4})?)"
-        "(/(" URL_CHARS_REGEX ")+)*[/]?$"; 
 
 static int regextract(char* _regex, char* str, char* ret, int max_size, int trim_start, int trim_end, int nullable) {
     const char *s = str;
@@ -40,6 +34,12 @@ static int regextract(char* _regex, char* str, char* ret, int max_size, int trim
 }
 
 static int validate_ftp_url(char *url) {
+    static const char url_regex[] =
+        "^(ftp|FTP)://"
+        "(((" URL_CHARS_REGEX ")*(:(" URL_CHARS_REGEX ")*)?@)?)"
+        "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)"
+        "((:[[:digit:]]{1,4})?)"
+        "(/(" URL_CHARS_REGEX ")+)*[/]?$"; 
     const char *s = url;
     regex_t regex;
     regmatch_t pmatch[1];
@@ -85,7 +85,7 @@ static int get_user_password(char *url, char *user, char* password) {
 }
 
 static int get_address_port_path(char *url, char* address, int* port, char* path) {
-    char addr_port_path_regex[] = "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)((:[[:digit:]]{1,4})?)(/(" URL_CHARS_REGEX ")+)*[/]?";
+    static char addr_port_path_regex[] = "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)((:[[:digit:]]{1,4})?)(/(" URL_CHARS_REGEX ")+)*[/]?";
 
     char *addr_port_path[FILENAME_MAX];
     if (regextract(addr_port_path_regex, url, addr_port_path, FILENAME_MAX, 0, 0, FALSE) == ERROR) {
