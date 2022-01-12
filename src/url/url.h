@@ -1,7 +1,7 @@
 #ifndef URL
 #define URL
 
-#define URL_FIELD_MAX 1024
+#define URL_FIELD_MAX 512
 
 typedef struct url_fields {
     char addr[URL_FIELD_MAX];
