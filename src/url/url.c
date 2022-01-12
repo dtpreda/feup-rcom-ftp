@@ -8,6 +8,9 @@
 
 #define URL_CHARS_REGEX                                                        \
     "([[:alnum:]\\$\\.\\+\\*\\(\\),!'_-]+)|(%[[:xdigit:]]{2})"
+#define DEFAULT_USER "anonymous"
+#define DEFAULT_PASSWORD ""
+#define DEFAULT_PORT "21"
 
 static int regextract(char* _regex, char* str, char* ret, int max_size, int trim_start, int trim_end, int nullable) {
     const char *s = str;
@@ -101,6 +104,26 @@ static int get_address_port_path(char *url, char* address, char* port, char* pat
         return ERROR;
     }
 
+    return SUCCESS;
+}
+
+int process_url(char* url, url_fields* urlf) {
+    if (validate_ftp_url(url) == ERROR) {
+        return ERROR;
+    }
+
+    if (get_user_password(url, (*urlf).user, (*urlf).password) == ERROR) {
+        strncpy((*urlf).user, DEFAULT_USER, URL_FIELD_MAX);
+        strncpy((*urlf).password, DEFAULT_PASSWORD, URL_FIELD_MAX);
+    }
+
+    if (get_address_port_path(url, (*urlf).addr, (*urlf).port, (*urlf).port) == ERROR) {
+        return ERROR;
+    }
+
+    if(strnlen((*urlf).port, URL_FIELD_MAX) == 0) {
+        strncpy((*urlf).port, DEFAULT_PORT, URL_FIELD_MAX);
+    }
     return SUCCESS;
 }
 
