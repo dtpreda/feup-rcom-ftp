@@ -31,6 +31,8 @@ static int regextract(char* _regex, char* str, char* ret, int max_size, int trim
 
     strncpy(ret, str + pmatch[0].rm_so + trim_start, pmatch[0].rm_eo - pmatch[0].rm_so - trim_end - trim_start);
     ret[pmatch[0].rm_eo - pmatch[0].rm_so - trim_start - trim_end] = '\0';
+
+    return SUCCESS;
 }
 
 static int validate_ftp_url(char *url) {
@@ -117,7 +119,7 @@ int process_url(char* url, url_fields* urlf) {
         strncpy((*urlf).password, DEFAULT_PASSWORD, URL_FIELD_MAX);
     }
 
-    if (get_address_port_path(url, (*urlf).addr, (*urlf).port, (*urlf).port) == ERROR) {
+    if (get_address_port_path(url, (*urlf).addr, (*urlf).port, (*urlf).path) == ERROR) {
         return ERROR;
     }
 
