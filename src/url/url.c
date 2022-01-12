@@ -81,7 +81,7 @@ static int get_user_password(char *url, char *user, char* password) {
     return SUCCESS;
 }
 
-static int get_address_port_path(char *url, char* address, int* port, char* path) {
+static int get_address_port_path(char *url, char* address, char* port, char* path) {
     static char addr_port_path_regex[] = "((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)((:[[:digit:]]{1,4})?)(/(" URL_CHARS_REGEX ")+)*[/]?";
 
     char *addr_port_path[FILENAME_MAX];
@@ -93,12 +93,9 @@ static int get_address_port_path(char *url, char* address, int* port, char* path
         return ERROR;
     }
 
-    char port_str[URL_FIELD_MAX];
-    if (regextract(":[[:digit:]]{1,4}", addr_port_path, port_str, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
+    if (regextract(":[[:digit:]]{1,4}", addr_port_path, port, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
         return ERROR;
     }
-
-    *port = atoi(port_str);
 
     if (regextract("(/(" URL_CHARS_REGEX ")+)+[/]?", addr_port_path, path, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
         return ERROR;
