@@ -55,6 +55,14 @@ int comm_read(int socket_fd, char* buffer, int max_size) {
     return SUCCESS;
 }
 
-int comm_kill() {
+int comm_kill(int socket_fd) {
+    if (shutdown(socket_fd, 2) != 0) {
+        return ERROR;
+    }
 
+    if (close(socket_fd) != 0) {
+        return ERROR;
+    }
+
+    return SUCCESS;
 }
