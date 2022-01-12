@@ -1,6 +1,6 @@
 CC = gcc 
 CFLAGS = -Wall
-PROG_NAME = ftp
+PROG_NAME = ftp-get
 
 SRCDIR = src
 
