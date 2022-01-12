@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "comms.h"
-#include "../common/common.h"
+#include "../../common/common.h"
 
 int comm_set(char *addr, char* port) {
     int status;
