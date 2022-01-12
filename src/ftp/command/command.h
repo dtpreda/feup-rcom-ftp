@@ -1,7 +1,7 @@
 #ifndef COMMAND
 #define COMMAND
 
-int user(char *user);
+int user(int socket_fd, char *username);
 
 /* void pass(char *password);
 
