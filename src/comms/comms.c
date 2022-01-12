@@ -6,8 +6,6 @@
 #include "comms.h"
 #include "../common/common.h"
 
-#define MAX_MSG_SIZE;
-
 int comm_set(char *addr, char* port) {
     int status;
     struct addrinfo hints;
@@ -38,8 +36,15 @@ int comm_set(char *addr, char* port) {
     return socket_fd;
 }
 
-int comm_write() {
+int comm_write(int socket_fd, char* msg) {
+    size_t len = strlen(msg);
 
+    if (send(socket_fd, msg, len, 0) != len) {
+        perror("send");
+        return ERROR;
+    }
+
+    return SUCCESS;
 }
 
 int comm_read() {
