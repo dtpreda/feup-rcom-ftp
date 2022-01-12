@@ -93,12 +93,15 @@ static int get_address_port_path(char *url, char* address, char* port, char* pat
     if (regextract(addr_port_path_regex, url, addr_port_path, FILENAME_MAX, 0, 0, FALSE) == ERROR) {
         return ERROR;
     }
-    
+
     if (regextract("((" URL_CHARS_REGEX ")+(\\.(" URL_CHARS_REGEX ")+)+)", addr_port_path, address, URL_FIELD_MAX, 0, 0, FALSE) == ERROR) {
         return ERROR;
     }
-
-    if (regextract(":[[:digit:]]{1,4}", addr_port_path, port, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
+    
+    if (strchr(addr_port_path, ':') == NULL) {
+        strncpy(port, "", 1);
+    }
+    else if (regextract(":[[:digit:]]{1,4}", addr_port_path, port, URL_FIELD_MAX, 1, 0, TRUE) == ERROR) {
         return ERROR;
     }
 
