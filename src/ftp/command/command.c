@@ -18,3 +18,14 @@ int user(int socket_fd, char *username) {
 
   return SUCCESS;
 }
+
+int password(int socket_fd, char* password) {
+    char command[MAX_LEN] = "pass ";
+    strncat(command, password, MAX_LEN - 5);
+
+    if (comm_write(socket_fd, command) != SUCCESS) {
+        return ERROR;
+    }
+
+    return SUCCESS;
+}
