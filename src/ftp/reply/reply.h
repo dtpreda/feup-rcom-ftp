@@ -4,11 +4,12 @@
 /**
  * @brief Reads a reply and parses it in the context of the command sent 
  * 
+ * @param socket_fd File descriptor of socket to read from
  * @param parser Function pointer to the parser
  * @param ret Return value needed, if any
  * @return int 0 on completed request, -1 otherwise 
  */
-int process_reply(int (*parser)(char *reply, char *ret), char *ret);
+int process_reply(int socket_fd, int (*parser)(char *reply, char *ret), char *ret);
 
 /**
  * @brief 
