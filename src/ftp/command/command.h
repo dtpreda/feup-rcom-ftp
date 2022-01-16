@@ -3,8 +3,8 @@
 
 int user(int socket_fd, char *username);
 
-/* void pass(char *password);
+int pass(char *password);
 
-void pasv(); */
+//void pasv();
 
 #endif /* COMMAND */
