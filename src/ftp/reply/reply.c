@@ -8,7 +8,13 @@
 #include "reply.h"
 
 int process_reply(int socket_fd, int (*parser)(char *reply, char *ret), char *ret) {
-    return SUCCESS;
+    char reply[MAX_LEN];
+
+    if (comm_read(socket_fd, reply, MAX_LEN) != SUCCESS) {
+        return ERROR;
+    }
+
+    return parser(reply, ret);
 }
 
 int parse_user(char *reply, char *ret) {
