@@ -48,11 +48,12 @@ int comm_write(int socket_fd, char* msg) {
 }
 
 int comm_read(int socket_fd, char* buffer, int max_size) {
-    if (recv(socket_fd, buffer, max_size, 0) <= 0) {
+    int n = ERROR;
+    if ((n = recv(socket_fd, buffer, max_size, 0)) <= 0) {
         return ERROR;
     }
 
-    return SUCCESS;
+    return n;
 }
 
 int comm_kill(int socket_fd) {
