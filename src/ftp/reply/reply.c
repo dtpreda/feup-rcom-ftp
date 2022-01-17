@@ -36,7 +36,7 @@ static int is_done(char *reply, int len) {
     return ERROR;
 }
 
-int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret), char *ret) {
+int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret, int max_size), char *ret, int max_size) {
     int partial_len = 0, total_len = 0;
     char partial[MAX_PARTIAL_MSG_SIZE] = "";
     char reply[MAX_MSG_SIZE] = "";
@@ -51,14 +51,14 @@ int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret),
         reply[total_len] = '\0';
 
         if (is_done(reply, total_len) == SUCCESS) {
-            return parser(reply, total_len, ret);
+            return parser(reply, total_len, ret, max_size);
         }
     }
 
     return ERROR;
 }
 
-int parse_connect(char* reply, int len, char* ret) {
+int parse_connect(char* reply, int len, char* ret, int max_size) {
     int last_line = 0;
     for (int i = 0; i < len; i++)
     {
@@ -73,7 +73,7 @@ int parse_connect(char* reply, int len, char* ret) {
     return atoi(code) == 220;
 }
 
-int parse_user(char *reply, int len, char *ret) {
+int parse_user(char *reply, int len, char *ret, int max_size) {
     char _code[4];
     int code;
 
@@ -89,7 +89,7 @@ int parse_user(char *reply, int len, char *ret) {
     return ERROR;
 }
 
-int parse_password(char *reply, int len, char *ret) {
+int parse_password(char *reply, int len, char *ret, int max_size) {
     char _code[4];
     int code;
 
@@ -105,7 +105,7 @@ int parse_password(char *reply, int len, char *ret) {
     return ERROR;
 }
 
-static int extract_port(char *reply, int len, char *ret) {
+static int extract_port(char *reply, int len, char *ret, int max_size) {
     static enum psm _psm = _;
     char _p1[10], _p2[10];
     int _p1_counter = 0, _p2_counter = 0;
@@ -163,7 +163,7 @@ static int extract_port(char *reply, int len, char *ret) {
     sprintf(ret, "%d", port);
 }
 
-int parse_pasv(char *reply, int len, char *ret) {
+int parse_pasv(char *reply, int len, char *ret, int max_size) {
     char _code[4];
     int code;
 
