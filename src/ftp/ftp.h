@@ -1,6 +1,6 @@
 #ifndef FTP
 #define FTP
 
-int login(char *user, char *password);
+int login(int socket_fd, char *user, char *password);
 
 #endif /* FTP */

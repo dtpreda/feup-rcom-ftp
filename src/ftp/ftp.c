@@ -4,6 +4,6 @@
 #include "reply/reply.h"
 #include "ftp.h"
 
-int login(char *user, char *password) {
+int login(int socket_fd, char *user, char *password) {
     return SUCCESS;
 }
