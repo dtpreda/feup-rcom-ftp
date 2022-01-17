@@ -34,7 +34,7 @@ int user(char* cmd, char *username, int max_size) {
     return SUCCESS;
 }
 
-int password(char *cmd, char* password, int max_size) {
+int pass(char *cmd, char* password, int max_size) {
     int total_len = strnlen(password, MAX_PARTIAL_MSG_SIZE) + 7;
     if (total_len >= max_size) {
         return ERROR;
