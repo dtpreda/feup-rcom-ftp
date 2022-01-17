@@ -7,24 +7,42 @@
 #include "../ftp_common.h"
 #include "command.h"
 
-int user(int socket_fd, char *username) {
-  char command[MAX_PARTIAL_MSG_SIZE] = "user ";
-  strncat(command, username, MAX_PARTIAL_MSG_SIZE - 5);
+int send_command(int socket_fd, int (*builder)(char* cmd, char* arg, int max_size), char* arg) {
+    char command[MAX_PARTIAL_MSG_SIZE];
 
-  if (comm_write(socket_fd, command) != SUCCESS) {
-    return ERROR;
-  }
-
-  return SUCCESS;
-}
-
-int password(int socket_fd, char* password) {
-    char command[MAX_PARTIAL_MSG_SIZE] = "pass ";
-    strncat(command, password, MAX_PARTIAL_MSG_SIZE - 5);
+    if (builder(command, arg, MAX_PARTIAL_MSG_SIZE) == ERROR) {
+        return ERROR;
+    }
 
     if (comm_write(socket_fd, command) != SUCCESS) {
         return ERROR;
     }
+
+    return SUCCESS;
+}
+
+int user(char* cmd, char *username, int max_size) {
+    int total_len = strnlen(username, MAX_PARTIAL_MSG_SIZE) + 7;
+    if (total_len >= MAX_PARTIAL_MSG_SIZE) {
+        return ERROR;
+    }
+
+    strncat(cmd, "user ", MAX_PARTIAL_MSG_SIZE - 5);
+    strncat(cmd, username, MAX_PARTIAL_MSG_SIZE - 5 - strnlen(username, MAX_PARTIAL_MSG_SIZE));
+    strncat(cmd, "\n", 2);
+
+    return SUCCESS;
+}
+
+int password(char *cmd, char* password) {
+    int total_len = strnlen(password, MAX_PARTIAL_MSG_SIZE) + 7;
+    if (total_len >= MAX_PARTIAL_MSG_SIZE) {
+        return ERROR;
+    }
+
+    strncat(cmd, "user ", MAX_PARTIAL_MSG_SIZE - 5);
+    strncat(cmd, password, MAX_PARTIAL_MSG_SIZE - 5 - strnlen(password, MAX_PARTIAL_MSG_SIZE));
+    strncat(cmd, "\n", 2);
 
     return SUCCESS;
 }
