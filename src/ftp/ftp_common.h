@@ -1,6 +1,7 @@
 #ifndef FTP_COMMON
 #define FTP_COMMON
 
-#define MAX_LEN 1024
+#define MAX_MSG_SIZE 131072
+#define MAX_PARTIAL_MSG_SIZE 1024
 
 #endif /* FTP_COMMON */

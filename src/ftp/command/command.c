@@ -8,8 +8,8 @@
 #include "command.h"
 
 int user(int socket_fd, char *username) {
-  char command[MAX_LEN] = "user ";
-  strncat(command, username, MAX_LEN - 5);
+  char command[MAX_PARTIAL_MSG_SIZE] = "user ";
+  strncat(command, username, MAX_PARTIAL_MSG_SIZE - 5);
 
   if (comm_write(socket_fd, command) != SUCCESS) {
     return ERROR;
@@ -19,8 +19,8 @@ int user(int socket_fd, char *username) {
 }
 
 int password(int socket_fd, char* password) {
-    char command[MAX_LEN] = "pass ";
-    strncat(command, password, MAX_LEN - 5);
+    char command[MAX_PARTIAL_MSG_SIZE] = "pass ";
+    strncat(command, password, MAX_PARTIAL_MSG_SIZE - 5);
 
     if (comm_write(socket_fd, command) != SUCCESS) {
         return ERROR;

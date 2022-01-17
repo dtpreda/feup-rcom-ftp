@@ -8,10 +8,10 @@
 #include "reply.h"
 
 int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret), char *ret) {
-    char reply[MAX_LEN];
+    char reply[MAX_PARTIAL_MSG_SIZE];
     int len;
 
-    if ((len = comm_read(socket_fd, reply, MAX_LEN)) == ERROR) {
+    if ((len = comm_read(socket_fd, reply, MAX_PARTIAL_MSG_SIZE)) == ERROR) {
         return ERROR;
     }
 
