@@ -100,5 +100,17 @@ int parse_password(char *reply, int len, char *ret) {
 }
 
 int parse_pasv(char *reply, int len, char *ret) {
-    return SUCCESS;
+    char _code[4];
+    int code;
+
+    strncpy(_code, reply, 3);
+    if ((code = atoi(_code)) == 0) {
+        return ERROR;
+    }
+
+    if (code == 227) {
+        return code;
+    }
+
+    return ERROR;
 }
