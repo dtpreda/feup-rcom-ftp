@@ -40,7 +40,7 @@ int password(char *cmd, char* password, int max_size) {
         return ERROR;
     }
 
-    strncat(cmd, "user ", max_size - 5);
+    strncat(cmd, "pass ", max_size - 5);
     strncat(cmd, password, max_size - 5 - strnlen(password, MAX_PARTIAL_MSG_SIZE));
     strncat(cmd, "\n", 2);
 
