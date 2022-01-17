@@ -7,6 +7,6 @@ int user(char* cmd, char *username, int max_size);
 
 int pass(char* cmd, char *password, int max_size);
 
-//void pasv();
+int pasv(char* cmd, char* arg, int max_size);
 
 #endif /* COMMAND */

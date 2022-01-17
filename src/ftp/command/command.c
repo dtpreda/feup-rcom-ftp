@@ -46,3 +46,9 @@ int pass(char *cmd, char* password, int max_size) {
 
     return SUCCESS;
 }
+
+int pasv(char* cmd, char* arg, int max_size) {
+    strncat(cmd, "pasv\n", max_size - 6);
+
+    return SUCCESS;
+}
