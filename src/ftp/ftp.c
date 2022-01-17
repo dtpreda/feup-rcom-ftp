@@ -13,7 +13,7 @@ int login(int socket_fd, char *username, char *password) {
     }
 
     int reply_code;
-    if ((reply_code = process_reply(socket_fd, parse_user, NULL)) == ERROR) {
+    if ((reply_code = process_reply(socket_fd, parse_user, NULL, 0)) == ERROR) {
         printf("Couldn't receive a proper answer from the server\n");
         return ERROR;
     }
@@ -28,7 +28,7 @@ int login(int socket_fd, char *username, char *password) {
             return ERROR;
         }
 
-        if ((reply_code = process_reply(socket_fd, parse_password, NULL)) == ERROR) {
+        if ((reply_code = process_reply(socket_fd, parse_password, NULL, 0)) == ERROR) {
             printf("Couldn't receive a proper answer from the server\n");
             return ERROR;
         }
