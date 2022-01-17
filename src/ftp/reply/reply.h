@@ -9,7 +9,7 @@
  * @param ret Return value needed, if any
  * @return int 0 on completed request, -1 otherwise 
  */
-int process_reply(int socket_fd, int (*parser)(char *reply, char *ret), char *ret);
+int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret), char *ret);
 
 /**
  * @brief 
@@ -18,7 +18,7 @@ int process_reply(int socket_fd, int (*parser)(char *reply, char *ret), char *re
  * @param ret Return value needed, if any
  * @return int 0 on success, -1 otherwise
  */
-int parse_user(char *reply, char *ret);
+int parse_user(char *reply, int len, char *ret);
 
 /**
  * @brief 
@@ -27,7 +27,7 @@ int parse_user(char *reply, char *ret);
  * @param ret Return value needed, if any
  * @return int 0 on success, -1 otherwise
  */
-int parse_password(char *reply, char *ret);
+int parse_password(char *reply, int len, char *ret);
 
 /**
  * @brief 
@@ -36,6 +36,6 @@ int parse_password(char *reply, char *ret);
  * @param ret Return value needed, if any
  * @return int Port for new connection on success, -1 otherwise
  */
-int parse_pasv(char *reply, char *ret);
+int parse_pasv(char *reply, int len, char *ret);
 
 #endif /* REPLY */
