@@ -12,50 +12,21 @@ static enum rsm {WHITESPACE, MISC, END};
 
 static int is_done(char *reply, int len) {
     int last_line = 0;
+    int line = 0;
     for (int i = 0; i < len; i++)
     {
         if (reply[i] == '\n' && i != len - 1) {
+            line += 1;
             last_line = i + 1;
         }
     }
-    
-    if (atoi(reply + last_line) != 0) {
+
+    char last = *(reply + last_line + 3);
+    if (last == ' ' && atoi(reply + last_line) != 0)
+    {
         return SUCCESS;
     }
-    else {
-        char code[4];
 
-        strncpy(code, reply + last_line, 3);
-
-        if (atoi(code) == 0) {
-            return ERROR;
-        }
-
-        static enum rsm _rsm = WHITESPACE;
-
-        for (int i = last_line + 3; i < len; i++) {
-            if (_rsm == WHITESPACE)
-            {
-                if (reply[i] != ' ') {
-                    return ERROR;
-                }
-                _rsm = MISC;
-            }
-            else if (_rsm == MISC)
-            {
-                if(reply[i] == '.') {
-                    _rsm = END;
-                }
-            }
-            else if (_rsm == END)
-            {
-                return ERROR;
-            }
-
-        }
-        if (_rsm == END)
-            return SUCCESS;
-    }
     return ERROR;
 }
 
@@ -71,6 +42,7 @@ int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret),
 
         strncat(reply, partial, MAX_MSG_SIZE - total_len);
         total_len += partial_len;
+        reply[total_len] = '\0';
 
         if (is_done(reply, total_len) == SUCCESS) {
             return parser(reply, total_len, ret);
