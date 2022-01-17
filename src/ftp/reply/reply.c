@@ -173,6 +173,9 @@ int parse_pasv(char *reply, int len, char *ret, int max_size) {
     }
 
     if (code == 227) {
+        if (ret != NULL) {
+            extract_port(reply, len, ret, max_size);
+        }
         return code;
     }
 
