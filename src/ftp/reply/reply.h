@@ -11,6 +11,8 @@
  */
 int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret), char *ret);
 
+int parse_connect(char *reply, int len, char *ret);
+
 /**
  * @brief 
  * 
