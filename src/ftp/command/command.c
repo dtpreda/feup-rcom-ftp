@@ -23,25 +23,25 @@ int send_command(int socket_fd, int (*builder)(char* cmd, char* arg, int max_siz
 
 int user(char* cmd, char *username, int max_size) {
     int total_len = strnlen(username, MAX_PARTIAL_MSG_SIZE) + 7;
-    if (total_len >= MAX_PARTIAL_MSG_SIZE) {
+    if (total_len >= max_size) {
         return ERROR;
     }
 
-    strncat(cmd, "user ", MAX_PARTIAL_MSG_SIZE - 5);
-    strncat(cmd, username, MAX_PARTIAL_MSG_SIZE - 5 - strnlen(username, MAX_PARTIAL_MSG_SIZE));
+    strncat(cmd, "user ", max_size - 5);
+    strncat(cmd, username, max_size - 5 - strnlen(username, MAX_PARTIAL_MSG_SIZE));
     strncat(cmd, "\n", 2);
 
     return SUCCESS;
 }
 
-int password(char *cmd, char* password) {
+int password(char *cmd, char* password, int max_size) {
     int total_len = strnlen(password, MAX_PARTIAL_MSG_SIZE) + 7;
-    if (total_len >= MAX_PARTIAL_MSG_SIZE) {
+    if (total_len >= max_size) {
         return ERROR;
     }
 
-    strncat(cmd, "user ", MAX_PARTIAL_MSG_SIZE - 5);
-    strncat(cmd, password, MAX_PARTIAL_MSG_SIZE - 5 - strnlen(password, MAX_PARTIAL_MSG_SIZE));
+    strncat(cmd, "user ", max_size - 5);
+    strncat(cmd, password, max_size - 5 - strnlen(password, MAX_PARTIAL_MSG_SIZE));
     strncat(cmd, "\n", 2);
 
     return SUCCESS;
