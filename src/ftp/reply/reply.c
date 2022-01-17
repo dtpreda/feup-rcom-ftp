@@ -9,6 +9,12 @@
 #include "reply.h"
 
 static enum rsm {WHITESPACE, MISC, END};
+static enum psm { _, H1,
+                  H2,
+                  H3,
+                  H4,
+                  P1,
+                  P2 };
 
 static int is_done(char *reply, int len) {
     int last_line = 0;
@@ -97,6 +103,64 @@ int parse_password(char *reply, int len, char *ret) {
     }
 
     return ERROR;
+}
+
+static int extract_port(char *reply, int len, char *ret) {
+    static enum psm _psm = _;
+    char _p1[10], _p2[10];
+    int _p1_counter = 0, _p2_counter = 0;
+    int p1, p2;
+
+    for (int i = 0; i < len; i++)
+    {
+        if (_psm == _ && reply[i] == '(') {
+            _psm = H1;
+        } else if (_psm == H1) {
+            if (reply[i] == ',') {
+                _psm = H2;
+            }
+        } else if (_psm == H2) {
+            if (reply[i] == ',') {
+                _psm = H3;
+            }
+        } else if (_psm == H3) {
+            if (reply[i] == ',') {
+                _psm = H4;
+            }
+        } else if (_psm == H4) {
+            if (reply[i] == ',') {
+                _psm = P1;
+            }
+        } else if (_psm == P1) {
+            if (reply[i] == ',') {
+                _p1[_p1_counter] = '\0';
+                if ((p1 = atoi(_p1)) == 0)
+                {
+                    return ERROR;
+                }
+                _psm = P2;
+                continue;
+            }
+            _p1[_p1_counter] = reply[i];
+            _p1_counter += 1;
+        }
+        else if (_psm == P2)
+        {
+            if (reply[i] == ')') {
+                _p2[_p2_counter] = '\0';
+                if ((p2 = atoi(_p2)) == 0) {
+                    return ERROR;
+                }
+                break;
+            }
+            _p2[_p2_counter] = reply[i];
+            _p2_counter += 1;
+        }
+    }
+
+    int port = p1 * 256 + p2;
+
+    sprintf(ret, "%d", port);
 }
 
 int parse_pasv(char *reply, int len, char *ret) {
