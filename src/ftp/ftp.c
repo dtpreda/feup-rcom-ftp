@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../common/common.h"
 #include "comms/comms.h"
@@ -42,4 +43,25 @@ int login(int socket_fd, char *username, char *password) {
     default:
         return ERROR;
     }
+}
+
+int set_pasv(int socket_fd) {
+    if (send_command(socket_fd, pasv, NULL) == ERROR) {
+        printf("Unable to send pasv command\n");
+        return ERROR;
+    }
+
+    int reply_code;
+    char _port[10];
+    if ((reply_code = process_reply(socket_fd, parse_pasv, _port, 10)) == ERROR)
+    {
+        printf("Couldn't receive a proper answer from the server\n");
+    }
+
+    int port;
+    if ((port = atoi(_port)) == 0) {
+        return ERROR;
+    }
+
+    return port;
 }
