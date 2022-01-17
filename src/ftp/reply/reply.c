@@ -160,7 +160,9 @@ static int extract_port(char *reply, int len, char *ret, int max_size) {
 
     int port = p1 * 256 + p2;
 
-    sprintf(ret, "%d", port);
+    snprintf(ret, max_size, "%d", port);
+
+    return SUCCESS;
 }
 
 int parse_pasv(char *reply, int len, char *ret, int max_size) {
