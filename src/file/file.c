@@ -4,9 +4,8 @@
 #include "../common/common.h"
 
 static int get_filename(char* filename, int filename_size) {
-    FILE* fp = fopen(filename, "w");
+    FILE* fp = fopen(filename, "r");
     if (fp == NULL) {
-        fclose(fp);
         return SUCCESS;
     }
     else
@@ -14,7 +13,7 @@ static int get_filename(char* filename, int filename_size) {
         for (int i = 0; i < 100; i++) {
             fclose(fp);
             snprintf(filename, filename_size, "file%d", i);
-            fp = fopen(filename, "w");
+            fp = fopen(filename, "r");
             if (fp == NULL) {
                 return SUCCESS;
             }
