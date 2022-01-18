@@ -56,6 +56,7 @@ int set_pasv(int socket_fd) {
     if ((reply_code = process_reply(socket_fd, parse_pasv, _port, 10)) == ERROR)
     {
         printf("Couldn't receive a proper answer from the server\n");
+        return ERROR;
     }
 
     int port;
