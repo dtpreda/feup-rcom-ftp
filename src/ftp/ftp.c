@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../common/common.h"
 #include "comms/comms.h"
@@ -65,4 +66,25 @@ int set_pasv(int socket_fd) {
     }
 
     return port;
+}
+
+int is_file(int socket_fd, char* path) {
+    if (send_command(socket_fd, stat, path) == ERROR) {
+        printf("Unable to send pasv command\n");
+        return ERROR;
+    }
+
+    int reply_code;
+    char ans[5];
+    if ((reply_code = process_reply(socket_fd, parse_pasv, ans, 5)) == ERROR)
+    {
+        printf("Couldn't receive a proper answer from the server\n");
+        return ERROR;
+    }
+
+    if (strncmp("y", ans, 1) == 0) {
+        return SUCCESS;
+    }
+
+    return ERROR;
 }
