@@ -21,14 +21,14 @@ int comm_set(char *addr, char* port) {
         return ERROR;
     }
 
-    int socket_fd;
-    if ((socket_fd = socket(info->ai_family, info->ai_socktype, info->ai_protocol)) == -1) {
+    int sockfd;
+    if ((sockfd = socket(info->ai_family, info->ai_socktype, info->ai_protocol)) == -1) {
         perror("socket");
         freeaddrinfo(info);
         return ERROR;
     }
 
-    if(connect(socket_fd, info->ai_addr, info->ai_addrlen) == -1) {
+    if(connect(sockfd, info->ai_addr, info->ai_addrlen) == -1) {
         perror("connect");
         freeaddrinfo(info);
         return ERROR;
@@ -36,13 +36,13 @@ int comm_set(char *addr, char* port) {
 
     freeaddrinfo(info);
 
-    return socket_fd;
+    return sockfd;
 }
 
-int comm_write(int socket_fd, char* msg) {
+int comm_write(int sockfd, char* msg) {
     size_t len = strlen(msg);
 
-    if (send(socket_fd, msg, len, 0) != len) {
+    if (send(sockfd, msg, len, 0) != len) {
         perror("send");
         return ERROR;
     }
@@ -50,21 +50,21 @@ int comm_write(int socket_fd, char* msg) {
     return SUCCESS;
 }
 
-int comm_read(int socket_fd, char* buffer, int max_size) {
+int comm_read(int sockfd, char* buffer, int max_size) {
     int n = ERROR;
-    if ((n = recv(socket_fd, buffer, max_size, 0)) <= 0) {
+    if ((n = recv(sockfd, buffer, max_size, 0)) <= 0) {
         return ERROR;
     }
 
     return n;
 }
 
-int comm_kill(int socket_fd) {
-    if (shutdown(socket_fd, 2) != 0) {
+int comm_kill(int sockfd) {
+    if (shutdown(sockfd, 2) != 0) {
         return ERROR;
     }
 
-    if (close(socket_fd) != 0) {
+    if (close(sockfd) != 0) {
         return ERROR;
     }
 
