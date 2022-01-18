@@ -7,9 +7,6 @@
 #include "ftp/comms/comms.h"
 #include "ftp/ftp.h"
 #include "url/url.h"
-#include "file/file.h"
-
-#define MAX_FILE_SIZE 256000
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -62,33 +59,15 @@ int main(int argc, char* argv[]) {
 
     printf("Passive mode enabled.\n");
 
-    printf("Connecting to file transfer port...\n");
-
-    int dl_fd;
-    if ((dl_fd = set_up_download(cmd_fd, urlf.addr, port, urlf.path)) == ERROR)
-    {
-        printf("Unable to connect to file transfer port\n");
-        return ERROR;
-    }
-
-    printf("Connected.\n");
     printf("Initiating transfer...\n");
 
-    char data[MAX_FILE_SIZE];
-    if (download(dl_fd, data, MAX_FILE_SIZE) == ERROR)
+    if (download(cmd_fd, urlf.addr, port, urlf.path, urlf.filename, URL_FIELD_MAX) == ERROR)
     {
-        printf("Unable to download requeste resource\n");
+        printf("Unable to download requested resource\n");
         return ERROR;
     }
 
     printf("Transfer complete.\n");
-
-    if (save_file(data, MAX_FILE_SIZE, urlf.filename, URL_FIELD_MAX))
-    {
-        printf("Unable to save file\n");
-        return ERROR;
-    }
-
     printf("Requested resource saved as %s\n", urlf.filename);
 
     return SUCCESS;

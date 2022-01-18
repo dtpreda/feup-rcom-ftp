@@ -9,9 +9,7 @@ int set_pasv(int cmd_fd, char *port);
 
 int is_file(int cmd_fd, char *path);
 
-int set_up_download(int cmd_fd, char *addr, char *port, char *path);
-
-int download(int cmd_fd, char *file, int max_size);
+int download(int cmd_fd, char *addr, char *port, char *path, char* filename, int filename_size);
 
 void close_ftp();
 

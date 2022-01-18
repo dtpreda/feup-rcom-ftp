@@ -102,7 +102,26 @@ int is_file(int cmd_fd, char* path) {
     return ERROR;
 }
 
-int set_up_download(int cmd_fd, char* addr, char* port, char* path) {
+static int get_filename(char* filename, int filename_size) {
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        return SUCCESS;
+    }
+    else
+    {
+        for (int i = 0; i < 100; i++) {
+            fclose(fp);
+            snprintf(filename, filename_size, "file%d", i);
+            fp = fopen(filename, "r");
+            if (fp == NULL) {
+                return SUCCESS;
+            }
+        }
+    }
+    return ERROR;
+}
+
+int download(int cmd_fd, char* addr, char* port, char* path, char* filename, int filename_size) {
     int dl_fd;
     if ((dl_fd = comm_set(addr, port)) == ERROR) {
         printf("Unable to set connection\n");
@@ -121,14 +140,22 @@ int set_up_download(int cmd_fd, char* addr, char* port, char* path) {
         return ERROR;
     }
 
-    return dl_fd;
-}
-
-int download(int dl_fd, char* file, int max_size) {
-    int size = 0;
-    if (retrieve_file(dl_fd, file, &size, 256000) == ERROR) {
-        printf("Unable to transfer file\n");
+    if (get_filename(filename, filename_size) == ERROR) {
+        printf("Unable to create a file.\n");
         return ERROR;
+    }
+
+    FILE *fp = fopen(filename, "w+");
+    fseek(fp, 0, SEEK_END);
+
+    char buffer[MAX_SOCK_SIZE];
+    int partial_len = 0;
+    while ((partial_len = comm_read(dl_fd, buffer, MAX_SOCK_SIZE)) != ERROR)
+    {
+        if (fwrite(buffer, sizeof (unsigned char), (size_t) partial_len, fp) <= 0) {
+            printf("Error writing to file\n");
+            return ERROR;
+        }
     }
 
     return SUCCESS;

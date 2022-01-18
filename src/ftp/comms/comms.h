@@ -1,6 +1,8 @@
 #ifndef COMMS
 #define COMMS
 
+#define MAX_SOCK_SIZE 256000
+
 int comm_set(char *addr, char* port);
 
 int comm_write(int sockfd, char* msg);
