@@ -8,6 +8,23 @@
 #include "reply/reply.h"
 #include "ftp.h"
 
+int set_up_cmd(char *addr, char* port) {
+    int fd;
+   
+   if ((fd  = comm_set(addr, port)) == ERROR) {
+       return ERROR;
+   }
+
+    if (process_reply(fd, parse_connect, NULL, 0) == ERROR) {
+        printf("Could not connect\n");
+        return ERROR;
+    }
+
+    printf("Connection established\n");
+
+    return fd;
+}
+
 int login(int socket_fd, char *username, char *password) {
     if (send_command(socket_fd, user, username)) {
         printf("Unable to send user command\n");
