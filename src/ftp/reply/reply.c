@@ -192,13 +192,14 @@ static int is_file(char *reply, int len, char* ret, int max_size) {
     {
         if (reply[i] == '\n') {
             first_res = i + 1;
+            break;
         }
     }
 
     if (first_res == -1)
         return ERROR;
 
-    if (reply[first_res] == "-") {
+    if (reply[first_res] == '-') {
         strncpy(ret, "y", max_size);
     } else {
         strncpy(ret, "n", max_size);

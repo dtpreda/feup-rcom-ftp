@@ -76,7 +76,7 @@ int is_file(int socket_fd, char* path) {
 
     int reply_code;
     char ans[5];
-    if ((reply_code = process_reply(socket_fd, parse_pasv, ans, 5)) == ERROR)
+    if ((reply_code = process_reply(socket_fd, parse_stat, ans, 5)) == ERROR)
     {
         printf("Couldn't receive a proper answer from the server\n");
         return ERROR;
