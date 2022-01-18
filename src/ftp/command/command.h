@@ -1,7 +1,7 @@
 #ifndef COMMAND
 #define COMMAND
 
-int send_command(int socket_fd, int (*builder)(char *cmd, char *arg, int max_size), char *arg);
+int send_command(int cmd_fd, int (*builder)(char *cmd, char *arg, int max_size), char *arg);
 
 int user(char* cmd, char *username, int max_size);
 

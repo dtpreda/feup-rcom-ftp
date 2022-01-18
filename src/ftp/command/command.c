@@ -7,14 +7,14 @@
 #include "../ftp_common.h"
 #include "command.h"
 
-int send_command(int socket_fd, int (*builder)(char* cmd, char* arg, int max_size), char* arg) {
+int send_command(int cmd_fd, int (*builder)(char* cmd, char* arg, int max_size), char* arg) {
     char command[MAX_PARTIAL_MSG_SIZE];
 
     if (builder(command, arg, MAX_PARTIAL_MSG_SIZE) == ERROR) {
         return ERROR;
     }
 
-    if (comm_write(socket_fd, command) != SUCCESS) {
+    if (comm_write(cmd_fd, command) != SUCCESS) {
         return ERROR;
     }
 
