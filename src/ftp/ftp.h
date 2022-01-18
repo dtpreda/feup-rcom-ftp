@@ -3,11 +3,11 @@
 
 int set_up_cmd(char *addr, char *port);
 
-int login(int socket_fd, char *username, char *password);
+int login(int cmd_fd, char *username, char *password);
 
-int set_pasv(int socket_fd, char *port);
+int set_pasv(int cmd_fd, char *port);
 
-int is_file(int socket_fd, char *path);
+int is_file(int cmd_fd, char *path);
 
 int set_up_download(int cmd_fd, char *addr, char *port, char *path);
 
