@@ -82,3 +82,34 @@ int is_file(int socket_fd, char* path) {
 
     return ERROR;
 }
+
+int set_up_download(int cmd_fd, char* addr, char* port, char* path) {
+    int dl_fd;
+    if ((dl_fd = comm_set(addr, port)) == ERROR) {
+        printf("Unable to set connection\n");
+    }
+
+    printf("Open connection with new port\n");
+
+    if (send_command(cmd_fd, retr, path) == ERROR) {
+        printf("Unable to send retr");
+    }
+
+    printf("Sent retr\n");
+
+    int reply_code;
+    if ((reply_code = process_reply(cmd_fd, parse_retr, NULL, 0)) == ERROR) {
+        printf("Error here\n");
+    }
+
+    return dl_fd;
+}
+
+int download(int dl_fd, char* file, int max_size) {
+    int size = 0;
+    if (retrieve_file(dl_fd, file, &size, 256000) == ERROR) {
+        printf("Unable to get file\n");
+    }
+
+    return SUCCESS;
+}
