@@ -17,17 +17,20 @@ int comm_set(char *addr, char* port) {
 
     if (getaddrinfo(addr, port, &hints, &info) != 0) {
         perror("getaddrinfo");
+        freeaddrinfo(info);
         return ERROR;
     }
 
     int socket_fd;
     if ((socket_fd = socket(info->ai_family, info->ai_socktype, info->ai_protocol)) == -1) {
         perror("socket");
+        freeaddrinfo(info);
         return ERROR;
     }
 
     if(connect(socket_fd, info->ai_addr, info->ai_addrlen) == -1) {
         perror("connect");
+        freeaddrinfo(info);
         return ERROR;
     }
 
