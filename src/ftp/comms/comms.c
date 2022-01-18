@@ -12,7 +12,7 @@ int comm_set(char *addr, char* port) {
     struct addrinfo *info;
 
     memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
+    hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
     if (getaddrinfo(addr, port, &hints, &info) != 0) {
