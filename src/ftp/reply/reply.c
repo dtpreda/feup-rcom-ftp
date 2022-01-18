@@ -245,3 +245,19 @@ int parse_stat(char *reply, int len, char* ret, int max_size) {
 
     return ERROR;
 }
+
+int parse_retr(char *reply, int len, char* ret, int max_size) {
+    char _code[4];
+    int code;
+
+    strncpy(_code, reply, 3);
+    if ((code = atoi(_code)) == 0) {
+        return ERROR;
+    }
+
+    if (code == 150 || code == 226) {
+        return code;
+    }
+
+    return ERROR;
+}
