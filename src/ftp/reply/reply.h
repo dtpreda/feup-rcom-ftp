@@ -41,4 +41,6 @@ int parse_password(char *reply, int len, char *ret, int max_size);
  */
 int parse_pasv(char *reply, int len, char *ret, int max_size);
 
+int parse_stat(char *reply, int len, char *ret, int max_size);
+
 #endif /* REPLY */

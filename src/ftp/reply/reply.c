@@ -185,3 +185,44 @@ int parse_pasv(char *reply, int len, char *ret, int max_size) {
 
     return ERROR;
 }
+
+static int is_file(char *reply, int len, char* ret, int max_size) {
+    int first_res = -1;
+    for (int i = 0; i < len - 1; i++)
+    {
+        if (reply[i] == '\n') {
+            first_res = i + 1;
+        }
+    }
+
+    if (first_res == -1)
+        return ERROR;
+
+    if (reply[first_res] == "-") {
+        strncpy(ret, "y", max_size);
+    } else {
+        strncpy(ret, "n", max_size);
+    }
+    return SUCCESS;
+}
+
+int parse_stat(char *reply, int len, char* ret, int max_size) {
+    char _code[4];
+    int code;
+
+    strncpy(_code, reply, 3);
+    if ((code = atoi(_code)) == 0) {
+        return ERROR;
+    }
+
+    if (code == 231) {
+        if (ret != NULL) {
+            if (is_file(reply, len, ret, max_size) == ERROR) {
+                return ERROR;
+            }
+        }
+        return code;
+    }
+
+    return ERROR;
+}
