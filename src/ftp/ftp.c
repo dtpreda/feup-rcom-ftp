@@ -17,13 +17,13 @@ int set_up_cmd(char *addr, char* port) {
    if ((cmd_fd  = comm_set(addr, port)) == ERROR) {
        return ERROR;
    }
+    _cmd_fd = cmd_fd;
 
     if (process_reply(cmd_fd, parse_connect, NULL, 0) == ERROR) {
         printf("Could not connect\n");
         return ERROR;
     }
 
-    _cmd_fd = -1;
     return cmd_fd;
 }
 
@@ -83,7 +83,7 @@ int set_pasv(int cmd_fd, char* port) {
 
 int is_file(int cmd_fd, char* path) {
     if (send_command(cmd_fd, stat, path) == ERROR) {
-        printf("Unable to send pasv command\n");
+        printf("Unable to send stat command\n");
         return ERROR;
     }
 
@@ -106,29 +106,29 @@ int set_up_download(int cmd_fd, char* addr, char* port, char* path) {
     int dl_fd;
     if ((dl_fd = comm_set(addr, port)) == ERROR) {
         printf("Unable to set connection\n");
+        return ERROR;
     }
-
-    printf("Open connection with new port\n");
+    _dl_fd = dl_fd;
 
     if (send_command(cmd_fd, retr, path) == ERROR) {
         printf("Unable to send retr");
+        return ERROR;
     }
-
-    printf("Sent retr\n");
 
     int reply_code;
     if ((reply_code = process_reply(cmd_fd, parse_retr, NULL, 0)) == ERROR) {
-        printf("Error here\n");
+        printf("Couldn't receive a proper answer from the server\n");
+        return ERROR;
     }
 
-    _dl_fd = dl_fd;
     return dl_fd;
 }
 
 int download(int dl_fd, char* file, int max_size) {
     int size = 0;
     if (retrieve_file(dl_fd, file, &size, 256000) == ERROR) {
-        printf("Unable to get file\n");
+        printf("Unable to transfer file\n");
+        return ERROR;
     }
 
     return SUCCESS;
