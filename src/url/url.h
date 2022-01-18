@@ -9,6 +9,7 @@ typedef struct url_fields {
     char path[URL_FIELD_MAX];
     char user[URL_FIELD_MAX];
     char password[URL_FIELD_MAX];
+    char filename[URL_FIELD_MAX];
 } url_fields;
 
 int process_url(char *url, url_fields* urlf);

@@ -112,6 +112,20 @@ static int get_address_port_path(char *url, char* address, char* port, char* pat
     return SUCCESS;
 }
 
+static void extract_filename(char* path, int path_len, char* filename) {
+    int start = path_len - 1;
+    for (int i = path_len - 2; i > 0; i--)
+    {
+        if (path[i] == '/')
+        {
+            start = i + 1;
+            break;
+        }
+    }
+
+    strncpy(filename, path + start, URL_FIELD_MAX);
+}
+
 int process_url(char* url, url_fields* urlf) {
     if (validate_ftp_url(url) == ERROR) {
         return ERROR;
@@ -125,6 +139,8 @@ int process_url(char* url, url_fields* urlf) {
     if (get_address_port_path(url, (*urlf).addr, (*urlf).port, (*urlf).path) == ERROR) {
         return ERROR;
     }
+
+    extract_filename((*urlf).path, strnlen((*urlf).path, URL_FIELD_MAX), (*urlf).filename);
 
     if(strnlen((*urlf).port, URL_FIELD_MAX) == 0) {
         strncpy((*urlf).port, DEFAULT_PORT, URL_FIELD_MAX);
