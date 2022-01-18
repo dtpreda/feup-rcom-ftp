@@ -215,7 +215,7 @@ int parse_stat(char *reply, int len, char* ret, int max_size) {
         return ERROR;
     }
 
-    if (code == 231) {
+    if (code == 213) {
         if (ret != NULL) {
             if (is_file(reply, len, ret, max_size) == ERROR) {
                 return ERROR;
