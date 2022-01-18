@@ -46,26 +46,20 @@ int login(int socket_fd, char *username, char *password) {
     }
 }
 
-int set_pasv(int socket_fd) {
+int set_pasv(int socket_fd, char* port) {
     if (send_command(socket_fd, pasv, NULL) == ERROR) {
         printf("Unable to send pasv command\n");
         return ERROR;
     }
 
     int reply_code;
-    char _port[10];
-    if ((reply_code = process_reply(socket_fd, parse_pasv, _port, 10)) == ERROR)
+    if ((reply_code = process_reply(socket_fd, parse_pasv, port, 10)) == ERROR)
     {
         printf("Couldn't receive a proper answer from the server\n");
         return ERROR;
     }
 
-    int port;
-    if ((port = atoi(_port)) == 0) {
-        return ERROR;
-    }
-
-    return port;
+    return SUCCESS;
 }
 
 int is_file(int socket_fd, char* path) {
