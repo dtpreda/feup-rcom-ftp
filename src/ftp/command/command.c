@@ -72,7 +72,7 @@ int retr(char* cmd, char* path, int max_size) {
         return ERROR;
     }
 
-    strncat(cmd, "stat ", max_size - 5);
+    strncat(cmd, "retr ", max_size - 5);
     strncat(cmd, path, max_size - 5 - strnlen(path, MAX_PARTIAL_MSG_SIZE));
     strncat(cmd, "\n", 2);
 
