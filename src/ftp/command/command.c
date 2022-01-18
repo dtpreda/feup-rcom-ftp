@@ -65,3 +65,16 @@ int stat(char* cmd, char* path, int max_size) {
 
     return SUCCESS;
 }
+
+int retr(char* cmd, char* path, int max_size) {
+    int total_len = strnlen(path, MAX_PARTIAL_MSG_SIZE) + 7;
+    if (total_len >= max_size) {
+        return ERROR;
+    }
+
+    strncat(cmd, "stat ", max_size - 5);
+    strncat(cmd, path, max_size - 5 - strnlen(path, MAX_PARTIAL_MSG_SIZE));
+    strncat(cmd, "\n", 2);
+
+    return SUCCESS;
+}
