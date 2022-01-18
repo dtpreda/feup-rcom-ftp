@@ -20,8 +20,6 @@ int set_up_cmd(char *addr, char* port) {
         return ERROR;
     }
 
-    printf("Connection established\n");
-
     return cmd_fd;
 }
 
