@@ -8,6 +8,9 @@
 #include "reply/reply.h"
 #include "ftp.h"
 
+static int _cmd_fd = -1;
+static int _dl_fd = -1;
+
 int set_up_cmd(char *addr, char* port) {
     int cmd_fd;
    
@@ -20,6 +23,7 @@ int set_up_cmd(char *addr, char* port) {
         return ERROR;
     }
 
+    _cmd_fd = -1;
     return cmd_fd;
 }
 
@@ -117,6 +121,7 @@ int set_up_download(int cmd_fd, char* addr, char* port, char* path) {
         printf("Error here\n");
     }
 
+    _dl_fd = dl_fd;
     return dl_fd;
 }
 
@@ -127,4 +132,19 @@ int download(int dl_fd, char* file, int max_size) {
     }
 
     return SUCCESS;
+}
+
+void close_ftp() {
+    if (_cmd_fd != -1)
+    {
+        if (comm_kill(_cmd_fd) == ERROR) {
+            printf("Error closing connection with command port\n");
+        }
+    }
+
+    if (_dl_fd != -1) {
+        if (comm_kill(_dl_fd) == ERROR) {
+            printf("Error closing connection with download port\n");
+        }
+    }
 }
