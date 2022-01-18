@@ -36,6 +36,24 @@ static int is_done(char *reply, int len) {
     return ERROR;
 }
 
+int retrieve_file(int socket_fd, char*data, int* size, int max_size) {
+    int partial_len = 0;
+    *size = 0;
+    char partial[MAX_PARTIAL_MSG_SIZE] = "";
+
+    while ((partial_len = comm_read(socket_fd, partial, MAX_PARTIAL_MSG_SIZE)) != ERROR) {
+        if ((*size) + partial_len >= max_size) {
+            return ERROR;
+        }
+
+        strncat(data, partial, max_size - (*size));
+        *size += partial_len;
+        data[*size] = '\0';
+    }
+
+    return SUCCESS;
+}
+
 int process_reply(int socket_fd, int (*parser)(char *reply, int len, char *ret, int max_size), char *ret, int max_size) {
     int partial_len = 0, total_len = 0;
     char partial[MAX_PARTIAL_MSG_SIZE] = "";

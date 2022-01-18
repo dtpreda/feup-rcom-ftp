@@ -43,4 +43,6 @@ int parse_pasv(char *reply, int len, char *ret, int max_size);
 
 int parse_stat(char *reply, int len, char *ret, int max_size);
 
+int retrieve_file(int socket_fd, char *data, int *size, int max_size);
+
 #endif /* REPLY */
