@@ -9,4 +9,6 @@ int pass(char* cmd, char *password, int max_size);
 
 int pasv(char* cmd, char* arg, int max_size);
 
+int stat(char *cmd, char *path, int max_size);
+
 #endif /* COMMAND */
